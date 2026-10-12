@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "icmpTtlSeconds": {
+      "type": "integer",
+      "minimum": 5,
+      "maximum": 3600,
+      "default": 90
+    },
+    "includeFreeIps": {
+      "type": "boolean",
+      "default": true
+    },
+    "maxSubnetHosts": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 65534,
+      "default": 4094
+    }
+  }
+}
