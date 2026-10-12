@@ -1,7 +1,5 @@
-# Sibyl.inventory v0.1.0-rc.2
+# Sibyl.inventory v0.1.0-rc.3
 
-Addon-owned Installationsvertrag (`deployment.json`) für generische Sibyl-Core-Deployment-API. Eigenständige, responsive Inventar-IPAM-Oberfläche mit lokalen DHCP-Lease- und Reservierungsdaten.
+Geräte, Netzwerkgeräte und USB-/HID-Peripherie über die generische Core-Records-API dauerhaft speichern und archivieren. Listenansicht mit Suche, IPAM mit vollständiger IPv4-Adresszählung (/16 bis /30), DHCP-Lease-Overlay und Reservierungen, 200 Adressen pro Seite. Kein fingierter ICMP-Status: tatsächliche AD-, DHCP-, ICMP- und Windows-Agent-Collector sind weiterhin nicht angebunden. Die Legacy-UI wurde als Grundlage berücksichtigt, ist aber noch nicht 1:1 umgesetzt.
 
-**Voraussetzung:** `Sibyl.ad v0.1.0-rc.3` muss vorher registriert werden.
-
-**Noch nicht aktiv:** AD-Inventarisierung, DHCP-/ICMP-Collector, vollständige ursprüngliche Ansicht und Persistenz. Es werden keine Produktivsysteme abgefragt oder geändert.
+Dependency: Sibyl.ad v0.1.0-rc.3. Für Persistenz Core RC.14 oder höher.

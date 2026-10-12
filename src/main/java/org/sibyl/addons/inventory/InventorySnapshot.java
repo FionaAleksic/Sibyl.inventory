@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public final class InventorySnapshot {
     public static final String MODULE_ID = "Sibyl.inventory";
-    public static final String VERSION = "0.1.0-rc.2";
+    public static final String VERSION = "0.1.0-rc.3";
     public record Address(String ipv4, String state, String owner) {}
     private InventorySnapshot() {}
 

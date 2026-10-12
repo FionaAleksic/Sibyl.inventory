@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "Sibyl.inventory",
-  "version": "0.1.0-rc.2",
+  "version": "0.1.0-rc.3",
   "name": "Inventar",
   "description": "IPAM-Vollansicht und ICMP-basierte Zustandsmodelle; Adapter zu bestehenden Inventar- und AD-Datenquellen in Vorbereitung.",
   "type": "feature",
@@ -19,7 +19,7 @@
     },
     {
       "id": "Sibyl.ad",
-      "version": ">=0.1.0-rc.2"
+      "version": ">=0.1.0-rc.3"
     }
   ],
   "configurationSchema": "config.schema.json",

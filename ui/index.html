@@ -1,37 +1,17 @@
-<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Sibyl · Inventar</title>
-<style>
-:root{color-scheme:light dark;font:15px/1.6 system-ui,sans-serif}body{max-width:1000px;margin:25px auto;padding:18px}h1{font-size:30px}a{color:inherit}label{display:block;margin:14px 0}input,textarea,button{font:inherit;padding:8px;border:1px solid #888}input{min-width:260px}textarea{width:100%;height:72px}button{cursor:pointer}table{border-collapse:collapse;width:100%}th,td{border-bottom:1px solid #888;padding:6px;text-align:left}.sub{opacity:.75}#rows{max-height:420px;overflow:auto}header{display:flex;justify-content:space-between;align-items:center}</style></head><body>
-<header><h1>Inventar</h1><a href="/">← Sibyl System</a></header>
-<p class="sub">Eigenständige Addon-Oberfläche: IPv4-/IPAM-Übersicht mit freien, reservierten und belegten Adressen. Dieser erste Stand verarbeitet Eingaben lokal; automatische AD-, DHCP- und ICMP-Collector folgen.</p>
-<label>IPv4-Netzwerk <input id="cidr" value="192.168.10.0/29" aria-label="IPv4-Netzwerk"></label>
-<label>DHCP-Leases (IP zu Gerätename, JSON)<textarea id="leases">{ "192.168.10.3": "Client-03" }</textarea></label>
-<label>Reservierungen (IP-Liste, Komma-getrennt)<input id="reserved" value="192.168.10.5"></label>
-<button id="render">Adressübersicht erzeugen</button><p id="status" role="status"></p><div id="rows"></div>
-<script>
-"use strict";
-const ip=(value)=>{const p=value.split(".");if(p.length!==4)throw Error("IPv4 falsch");
- let x=0;for(const s of p){if(!/^(0|[1-9][0-9]{0,2})$/.test(s)||+s>255)throw Error("IPv4 falsch");x=(x*256+ +s)>>>0;}return x>>>0;};
-const address=(n)=>[n>>>24,(n>>>16)&255,(n>>>8)&255,n&255].join(".");
-document.getElementById("render").onclick=()=>{
- const status=document.getElementById("status"), rows=document.getElementById("rows");rows.replaceChildren();
- try{
-  const [v,p]=document.getElementById("cidr").value.trim().split("/");
-  const prefix=Number(p);if(!Number.isInteger(prefix)||prefix<24||prefix>30)throw Error("Nur /24 bis /30 in dieser Vorschau");
-  const addr=ip(v), hosts=2**(32-prefix),start=Math.floor(addr/hosts)*hosts;
-  if(start!==addr)throw Error("Bitte Netzwerkadresse eingeben");
-  const leases=JSON.parse(document.getElementById("leases").value);
-  if(!leases||Array.isArray(leases)||typeof leases!=="object")throw Error("DHCP-JSON ungültig");
-  const reserved=new Set(document.getElementById("reserved").value.split(",").map(x=>x.trim()).filter(Boolean));
-  const tbl=document.createElement("table"),hdr=document.createElement("tr");
-  for(const v of ["Adresse","Zustand","Bezeichnung"]){const h=document.createElement("th");h.textContent=v;hdr.append(h);}tbl.append(hdr);
-  for(let i=1;i<hosts-1;i++){
-   const a=address(start+i),lease=Object.hasOwn(leases,a)?String(leases[a]):"",tr=document.createElement("tr");
-   for(const v of [a,lease?"DHCP-Lease":reserved.has(a)?"Reserviert":"Frei",lease]){
-    const td=document.createElement("td");td.textContent=v;tr.append(td);}
-   tbl.append(tr);
-  }
-  rows.append(tbl);status.textContent=(hosts-2)+" nutzbare IPv4-Adressen";
- }catch(e){status.textContent="Fehler: "+e.message;}
-};
-document.getElementById("render").click();
-</script></body></html>
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Inventar · Sibyl System</title><link rel="stylesheet" href="inventory.css"><script defer src="bridge.js"></script><script defer src="inventory.js"></script></head><body>
+<header><div><small>IT-ASSET-MANAGEMENT</small><h1>Inventar</h1><p>Geräte, Peripherie und IP-Adressverwaltung</p></div><div id="stats"></div></header>
+<nav class="tabs"><button class="active" data-tab="devices">Geräte</button><button data-tab="peripherals">Peripherie</button><button data-tab="ipam">IP-Adressen</button></nav>
+<section id="devices" class="panel"><div class="bar"><h2>Inventarisierte Geräte</h2><input id="device-search" placeholder="Name, IP, Typ filtern …"><button class="primary" id="new-device">+ Gerät</button></div>
+<form id="device-form" hidden><h3>Gerät bearbeiten</h3><div class="row"><label>Gerätename<input id="device-name" required maxlength="120"></label><label>Typ<select id="device-type"><option>COMPUTER</option><option>LAPTOP</option><option>SERVER</option><option>NETWORK</option><option>PRINTER</option><option>OTHER</option></select></label><label>IPv4<input id="device-ip" placeholder="192.168.1.20"></label><label>MAC<input id="device-mac" maxlength="32"></label><label>Status<select id="device-status"><option>ACTIVE</option><option>STORAGE</option><option>REPAIR</option><option>RETIRED</option></select></label><label>Standort<input id="device-location" maxlength="120"></label></div>
+<div class="buttons"><button type="submit" class="primary">Speichern</button><button type="button" id="device-cancel">Schließen</button></div></form>
+<div class="scroll"><table><thead><tr><th>Name</th><th>Typ</th><th>IPv4</th><th>MAC</th><th>Status</th><th>Erreichbarkeit</th><th></th></tr></thead><tbody id="device-rows"></tbody></table></div></section>
+<section id="peripherals" class="panel" hidden><div class="bar"><h2>Angeschlossene Peripherie</h2><button class="primary" id="new-peripheral">+ Gerät</button></div>
+<form id="peripheral-form" hidden><div class="row"><label>Bezeichnung<input id="peripheral-name" maxlength="120" required></label><label>Typ<select id="peripheral-type"><option>MONITOR</option><option>MOUSE</option><option>KEYBOARD</option><option>USB_STORAGE</option><option>USB_DEVICE</option><option>HID</option><option>DOCK</option><option>OTHER</option></select></label><label>Hersteller<input id="peripheral-vendor" maxlength="120"></label><label>Seriennummer<input id="peripheral-serial" maxlength="128"></label><label>Angeschlossen an<input id="peripheral-parent" maxlength="120" placeholder="Computername"></label><label>Status<select id="peripheral-status"><option>INSTALLED</option><option>STORAGE</option><option>DEFECTIVE</option><option>RETIRED</option></select></label></div><div class="buttons"><button type="submit" class="primary">Speichern</button><button id="peripheral-cancel" type="button">Schließen</button></div></form>
+<div class="scroll"><table><thead><tr><th>Name</th><th>Typ</th><th>Hersteller</th><th>Seriennummer</th><th>Host</th><th>Status</th><th></th></tr></thead><tbody id="peripheral-rows"></tbody></table></div></section>
+<section id="ipam" class="panel" hidden><h2>Vollständige IPv4-Adressliste</h2>
+<p>Netzwerk mit vollständiger Adresszählung. DHCP-Leases und Reservierungen lassen sich aus JSON einlesen. ICMP-Onlinestatus wird erst angezeigt, wenn ein verifizierter Collector Messdaten übermittelt; es wird nicht einfach „Online“ angenommen.</p>
+<form id="ipam-form"><div class="row"><label>Subnetz-CIDR<input id="cidr" value="172.22.100.0/24" required></label><label>DHCP-Leases als JSON (IP zu Name)<textarea id="leases" rows="3">{}</textarea></label><label>Reservierte Adressen (Komma-getrennt)<textarea id="reservations" rows="3"></textarea></label></div><button class="primary" type="submit">Subnetz speichern und anzeigen</button></form>
+<div class="buttons"><label>Nach Adresse filtern<input id="ip-search"></label><label>Seite <input id="ip-page" type="number" min="1" value="1"></label></div><div id="ip-summary" class="muted"></div>
+<div class="scroll"><table><thead><tr><th>IPv4</th><th>Status</th><th>Gerät</th><th>ICMP</th></tr></thead><tbody id="ip-rows"></tbody></table></div></section><p id="status" role="status"></p>
+<footer>Automatischer AD-/DHCP-/ICMP-Abgleich und Hardware-Agentdaten benötigen Connectoren sowie sichere Servicekonten. Diese Version speichert manuelle Geräte- und IPAM-Daten dauerhaft pro Benutzer.</footer>
+</body></html>
