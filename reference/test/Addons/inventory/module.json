@@ -1,0 +1,40 @@
+{
+  "kind": "module",
+  "type": "feature",
+  "id": "Sibyl.inventory",
+  "name": "Inventar",
+  "version": "3.4.1",
+  "description": "Geräte-, Komponenten-, Peripherie- und IP-Inventarisierung mit Active-Directory-Anbindung.",
+  "dependencies": [
+    "Sibyl.ad"
+  ],
+  "frontend": {
+    "entry": "frontend/module.js",
+    "navLabel": "Inventar"
+  },
+  "admin": {
+    "entry": "admin/module.js",
+    "label": "Inventar Verwaltung"
+  },
+  "backend": {
+    "jar": "backend/niko-inventory.jar",
+    "providerClass": "niko.inventory.InventoryModule"
+  },
+  "externalApi": {
+    "mount": "inventory",
+    "routes": [
+      {
+        "method": "POST",
+        "path": "/agent/identify"
+      },
+      {
+        "method": "POST",
+        "path": "/agent/report"
+      },
+      {
+        "method": "POST",
+        "path": "/ip/collector/report"
+      }
+    ]
+  }
+}
