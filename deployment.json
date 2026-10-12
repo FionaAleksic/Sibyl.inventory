@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "id": "Sibyl.inventory",
+  "version": "0.1.0-rc.2",
+  "kind": "feature",
+  "dependencies": [
+    {
+      "id": "Sibyl.ad",
+      "version": "0.1.0-rc.3"
+    }
+  ],
+  "operations": [
+    {
+      "type": "publish-ui",
+      "path": "ui/index.html",
+      "label": "Inventar"
+    }
+  ]
+}
