@@ -7,17 +7,20 @@
       "type": "integer",
       "minimum": 5,
       "maximum": 3600,
-      "default": 90
+      "default": 90,
+      "title": "Ping-Zustand gültig (Sekunden)"
     },
     "includeFreeIps": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Freie IP-Adressen anzeigen"
     },
     "maxSubnetHosts": {
       "type": "integer",
       "minimum": 1,
       "maximum": 65534,
-      "default": 4094
+      "default": 4094,
+      "title": "Maximale Hosts pro Subnetz"
     }
   }
 }
